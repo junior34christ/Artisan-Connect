@@ -1,0 +1,18 @@
+----- Lisez la note à chaque migration -----
+
+----- Commande de migration de la base de donnée ------
+!! php artisan migrate !!
+
+----- Commande de restauration de la base de donnée ------
+!! php artisan migrate:fresh !!
+
+Commande seed
+!! php artisan db:seed --class=RoleSeeder !!
+
+-------------------Autre commande laravel--------------------
+
+--php artisan tinker
+
+-----------------------Commande pour excuter le serve websockets-------------------
+
+--php artisan websockets:serve
