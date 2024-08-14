@@ -28,13 +28,17 @@ WORKDIR /var/www
 # Copier les fichiers de l'application dans le conteneur
 COPY . .
 
+# Configurer les permissions avant d'installer les dépendances
+RUN chown -R www-data:www-data /var/www
+RUN chmod -R 755 /var/www
+
 # Installer les dépendances PHP avec Composer
-RUN composer install --optimize-autoloader --no-dev
+RUN composer install --optimize-autoloader --no-dev --no-scripts --prefer-dist --no-interaction
 
 # Installer les dépendances NPM et compiler les assets
 RUN npm install && npm run build
 
-# Configurer les permissions
+# Configurer les permissions après installation
 RUN chown -R www-data:www-data /var/www
 
 # Exposer le port 9000 et démarrer PHP-FPM
