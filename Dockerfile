@@ -1,4 +1,3 @@
-# Utiliser une image de base PHP officielle avec Composer et Node.js
 FROM php:8.2-fpm
 
 # Installer des dépendances système nécessaires
@@ -6,17 +5,22 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
+    libzip-dev \
     locales \
     zip \
     jpegoptim optipng pngquant gifsicle \
     vim unzip git curl \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip exif pcntl
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip exif pcntl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Installer Node.js et npm
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm
 
 # Configurer le répertoire de travail
 WORKDIR /var/www
@@ -24,7 +28,7 @@ WORKDIR /var/www
 # Copier les fichiers de l'application dans le conteneur
 COPY . .
 
-# Installer les dépendances PHP
+# Installer les dépendances PHP avec Composer
 RUN composer install --optimize-autoloader --no-dev
 
 # Installer les dépendances NPM et compiler les assets
